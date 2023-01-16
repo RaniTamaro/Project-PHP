@@ -1,0 +1,39 @@
+.main-background{
+    background-color: #74B3CE;
+}
+
+.navbar {
+    background-color: #172A3A;
+}
+
+.navbar a{
+    color: #74B3CE;
+}
+
+.navbar a:hover{
+    color: white;
+}
+
+.active {
+    color: white !important;
+}
+
+.main-conteiner{
+    background-color: rgba(80, 127, 145, 0.3);
+    color: #172A3A;
+    border-radius: 25px;
+    margin: 2% 10% 0% 10%;
+    padding: 2%;
+}
+
+.main-conteiner h3{
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.main-conteiner p {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
