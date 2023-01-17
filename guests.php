@@ -4,7 +4,7 @@
     include_once('header.php');
     include('functions.php');
 
-?>
+    ?>
 
     </div>
     </body>

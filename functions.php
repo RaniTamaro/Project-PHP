@@ -12,7 +12,7 @@ function open_connection(){
 	mysqli_set_charset($connection, "utf8");
 }
 
-function zamknij_polaczenie(){
+function close_connection(){
 	global $connection;
 	mysqli_close($connection);
 }
