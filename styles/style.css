@@ -37,3 +37,11 @@
     justify-content: center;
     text-align: center;
 }
+
+.table tr th {
+    border-bottom: 2px solid #172A3A;
+}
+
+.table tr td {
+border-bottom: 1px solid #172A3A;
+}
