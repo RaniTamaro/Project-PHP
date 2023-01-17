@@ -2,7 +2,7 @@
     $title = "Goście";
     $page = "guests";
     include_once('header.php');
-    include('funkcje.php');
+    include('functions.php');
 
 ?>
 
