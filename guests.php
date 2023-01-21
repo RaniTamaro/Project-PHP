@@ -27,7 +27,7 @@ function show_guest()
     <form method='POST'>
         <h3>Goście</h3>
         <div style="text-align:right">
-            <input type="submit" class="btn btn-outline-dark" name='button[-1]' value="Dodaj nowego" />
+            <input type="submit" class="btn btn-outline-dark" name='button[-1]' value="Dodaj nowego gościa" />
         </div>
 
         <table class='table table-striped table-color'>
@@ -119,7 +119,7 @@ if(isset($_POST['button'])) {
 
 switch($option) {
     case 'Edytuj': edit_guest($no); break;
-    case 'Dodaj nowego': edit_guest(); break;
+    case 'Dodaj nowego gościa': edit_guest(); break;
     case 'Zapisz': save_guest($no); break;
     case 'Usuń': delete_guest($no); break;
     // case 'Zamelduj': zamelduj_goscia($nr); break;
