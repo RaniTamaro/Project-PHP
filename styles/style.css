@@ -45,3 +45,7 @@
 .table tr td {
 border-bottom: 1px solid #172A3A;
 }
+
+.margin-5px {
+    margin: 5px;
+}
