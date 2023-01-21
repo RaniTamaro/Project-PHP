@@ -6,7 +6,7 @@ function open_connection(){
 	$pass = "";
     $database = "hotel";
 
-	$polaczenie = mysqli_connect($server, $user, $pass) or exit("Nieudane połączenie z serwerem");
+	$connection = mysqli_connect($server, $user, $pass) or exit("Nieudane połączenie z serwerem");
     mysqli_select_db($connection, $database);
 
 	mysqli_set_charset($connection, "utf8");
