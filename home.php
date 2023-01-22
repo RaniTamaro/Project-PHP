@@ -6,7 +6,7 @@
 
 
         <h3 class="display-5"> Witaj!</h3>
-        <p>Wszystkie opcję dostępne dla pracownika są dostępne w menu<br>
+        <p>Wszystkie opcje dostępne dla pracownika znajdują się w menu.<br>
         Życzymy miłego dnia pracy!</p>
     </div>
 

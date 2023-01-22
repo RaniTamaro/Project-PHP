@@ -104,7 +104,7 @@
     {
         global $connection;
         
-        $command = "delete from room where id=$no;";		
+        $command = "delete from pokoj where id=$no;";		
         mysqli_query($connection, $command) or exit("Błąd w zapytaniu: $command");
     }
     
