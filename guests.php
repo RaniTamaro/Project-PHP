@@ -13,6 +13,7 @@ if (empty($_SESSION)) {
     $_SESSION["adult"] = 'T';
 }
 
+// display list of all guests from database
 function show_guest()
 {
     global $connection;
@@ -57,7 +58,7 @@ function show_guest()
     <?= mysqli_free_result($result);
 }
 
-
+// display form to edit or add guest
 function edit_guest($no = -1)
 {
     global $connection;
@@ -80,6 +81,7 @@ function edit_guest($no = -1)
     $_SESSION["modalform"] = 'editGuest';
 }
 
+// save guest from form to database
 function save_guest($no)
 {
     global $connection;
@@ -96,6 +98,7 @@ function save_guest($no)
     header("Location: guests.php");
 }
 
+// delete guest from database
 function delete_guest($no)
 {
     global $connection;
@@ -104,9 +107,46 @@ function delete_guest($no)
 	mysqli_query($connection, $command) or exit("Błąd w zapytaniu: $command");
 }
 
+// display form for adding checkin and checkout
 function checkin_guest($no)
 {
     //TODO: Add logic or change place of this function.
+	
+	global $connection;
+    $_SESSION["roomId"] = '';
+	$_SESSION["roomName"] = '';
+    $_SESSION["checkInDate"] = '';
+    $_SESSION["checkOutDate"] = '';
+
+    $_SESSION["modalform"] = 'addCheckIn';
+	
+}
+	
+// save checkin and checkout in database
+function save_checkin($no)
+{
+	global $connection;
+	// get dates and roomId from form
+	$roomName = $_POST['roomName'];
+	
+	$command = "select id, nazwa from pokoj where nazwa='$roomName';";
+	$row = mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
+    $room = mysqli_fetch_row($row);
+	$roomId = $room[0];
+	
+    $checkInDate = $_POST['checkInDate'];
+    $checkOutDate = $_POST['checkOutDate'];
+	
+	// fill okres_wynajmu table
+	$command = "insert into okres_wynajmu values(null, '$checkInDate', '$checkOutDate');";  
+    mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
+	
+	// fill pokoj_goscie table
+	$checkId = mysqli_insert_id($connection);
+	$command = "insert into pokoj_goscie values(null, '$roomId', '$no', '$checkId');";  
+    mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
+	    
+    header("Location: guests.php");
 
 }
 
@@ -125,7 +165,8 @@ switch($option) {
     case 'Dodaj nowego gościa': edit_guest(); break;
     case 'Zapisz': save_guest($no); break;
     case 'Usuń': delete_guest($no); break;
-    // case 'Zamelduj': checkin_guest($no); break;
+	case 'Zamelduj': checkin_guest($no); break;
+    case 'Potwierdź': save_checkin($no); break;
 }
 
 
@@ -167,11 +208,48 @@ close_connection();
     </div>
 </div>
 
+
+<!-- Checkin Guest Modal -->
+<div class="modal fade" id="addCheckIn" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Zameldowanie</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+                <form method=POST action=''>
+                    <div class="modal-body">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="roomInput" name="roomName" placeholder="Nazwa" value="">
+                                <label for="roomInput">Pokój</label>
+                            </div>
+                            <div class="form-floating mb-3">
+								<input id="startDate" class="form-control" type="date" name="checkInDate"/>
+								<label for="startDate">Od</label>
+							</div>
+							<div class="form-floating mb-3">
+								<input id="endDate" class="form-control" type="date" name="checkOutDate"/>
+								<label for="endDate">Do</label>
+							</div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-secondary" data-bs-dismiss="modal" value="Anuluj"/>
+                        <input type="submit" name="button[<?=$no?>]" class="btn btn-primary" value="Potwierdź"/>
+                    </div>
+                </form>
+        </div>
+    </div>
+</div>
+
+
 <script>
     $(document).ready(function () {
         let value = '<?php echo $_SESSION['modalform']?>';
         if (value == 'editGuest') {
             $('#editGuest').modal('show');
+        }
+		if (value == 'addCheckIn') {
+            $('#addCheckIn').modal('show');
         }
     });
 
