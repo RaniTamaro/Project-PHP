@@ -87,12 +87,13 @@
         global $connection;
         $roomName = $_POST['roomName'];
         $bedNumber = $_POST['bedNumber'];
-        $personPrice = $_POST['personPrice'];
-        $price = $_POST['price'];
-    
+        isset($_POST['personPrice']) ? $personPrice = $_POST['personPrice'] : $personPrice = null;
+        isset($_POST['price']) ? $price = $_POST['price'] : $price = null;
+
         if($no != -1)
             $command = "update pokoj set nazwa='$roomName', lozka='$bedNumber', cenaosoba='$personPrice', cenapokoj='$price' where id=$no;";
-        else $command = "insert into pokoj values(null, '$roomName', '$bedNumber', '$personPrice' , '$price');";
+        else
+            $command = "insert into pokoj values(null, '$roomName', '$bedNumber', '$personPrice' , '$price');";
         
         mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
         
@@ -148,11 +149,11 @@
                                     <label for="bedNumberInput">Ilość łóżek</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="number" min=1 class="form-control" id="personPriceInput" name="bedNumber" placeholder="Cena za osobę..." value="<?=$_SESSION["personPrice"]?>">
+                                    <input type="number"class="form-control" id="personPriceInput" name="personPrice" placeholder="Cena za osobę..." value="<?=$_SESSION["personPrice"]?>">
                                     <label for="personPriceInput">Cena za jedną osobę</label>
                                 </div>
                                 <div class="form-floating">
-                                    <input type="number" min=1 class="form-control" id="priceInput" name="price" placeholder="Cena za pokój..." value="<?=$_SESSION["price"]?>">
+                                    <input type="number" class="form-control" id="priceInput" name="price" placeholder="Cena za pokój..." value="<?=$_SESSION["price"]?>">
                                     <label for="priceInput">Cena za pokój</label>
                                 </div>
                         </div>
