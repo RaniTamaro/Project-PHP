@@ -49,3 +49,11 @@ border-bottom: 1px solid #172A3A;
 .margin-5px {
     margin: 5px;
 }
+
+.search-input{
+    background-image: url('/styles/search-icon.svg');
+    background-position: 10px 12px;
+    background-repeat: no-repeat;
+    margin: 5px;
+    opacity: 80%;
+}

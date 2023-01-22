@@ -30,8 +30,9 @@
             <div style="text-align:right">
                 <input type="submit" class="btn btn-outline-dark" name='button[-1]' value="Dodaj nowy pokój" />
             </div>
-    
-            <table class='table table-striped table-color'>
+        
+            <input type="text" class="form-control search-input" id="roomSearch" onkeyup="searchFuntion()" placeholder="Wyszukaj pokój"/>
+            <table class='table table-striped table-color' id="roomsTable">
                 <thead>
                     <tr class="text-center">
                     <?php
@@ -171,8 +172,30 @@
                 $('#editRoom').modal('show');
             }
         });
+
+        function searchFuntion(){
+        let input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById('roomSearch');
+        filter = input.value;
+        table = document.getElementById('roomsTable');
+        tr = table.getElementsByTagName('tr');
+
+        for (i = 0; i < tr.length; i++){
+            td = tr[i].getElementsByTagName('td')[0];
+            if (td){
+                txtValue = td.textContent || td.innerHTML;
+                if (txtValue.indexOf(filter) > -1){
+                    tr[i].style.display = "";
+                }
+                else{
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
     </script>
-    
+
+    </div>
     </body>
     
     </html>

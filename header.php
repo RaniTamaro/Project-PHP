@@ -39,6 +39,9 @@
                     <li class="nav-item">
                         <a class="nav-link <?= $page == 'rooms' ? 'active' : ''?>" href="rooms.php">Pokoje</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $page == 'checkin' ? 'active' : ''?>" href="checkin.php">Zameldowania</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">

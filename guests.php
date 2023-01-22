@@ -30,20 +30,22 @@ function show_guest()
             <input type="submit" class="btn btn-outline-dark" name='button[-1]' value="Dodaj nowego gościa" />
         </div>
 
-        <table class='table table-striped table-color'>
+        <input type="text" class="form-control search-input" id="guestSearch" onkeyup="searchFuntion()" placeholder="Wyszukaj gościa"/>
+        <table class='table table-striped table-color' id="guestsTable">
             <thead>
                 <tr class="text-center">
                 <?php
                 foreach ($headers as $header)
                     echo "<th scope='col'>$header</th>";
 
-                echo "<th scope='col'></th></tr></thead><tbody>";
+                echo "<th scope='col'></th></th></tr></thead><tbody>";
                 while ($row = mysqli_fetch_row($result)) {
                     echo "<tr class='text-center'>";
                     foreach ($row as $c => $cell)
                         if ($c != 0)
                             echo "<td>$cell</td>";
-                    echo "<td><input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Edytuj'>
+                    echo "<td><input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Zamelduj'>
+                            <input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Edytuj'>
                             <input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Usuń'>
                         </td>";
                     print("</tr>");
@@ -105,6 +107,7 @@ function delete_guest($no)
 function checkin_guest($no)
 {
     //TODO: Add logic or change place of this function.
+
 }
 
 
@@ -122,7 +125,7 @@ switch($option) {
     case 'Dodaj nowego gościa': edit_guest(); break;
     case 'Zapisz': save_guest($no); break;
     case 'Usuń': delete_guest($no); break;
-    // case 'Zamelduj': zamelduj_goscia($nr); break;
+    // case 'Zamelduj': checkin_guest($no); break;
 }
 
 
@@ -171,8 +174,32 @@ close_connection();
             $('#editGuest').modal('show');
         }
     });
+
+    function searchFuntion(){
+        let input, filter, table, tr, td, i, txtValue1, txtValue2;
+        input = document.getElementById('guestSearch');
+        filter = input.value;
+        table = document.getElementById('guestsTable');
+        tr = table.getElementsByTagName('tr');
+
+        for (i = 0; i < tr.length; i++){
+            td1 = tr[i].getElementsByTagName('td')[0];
+            td2 = tr[i].getElementsByTagName('td')[1]
+            if (td1 || td2){
+                txtValue1 = td1.textContent || td1.innerHTML;
+                txtValue2 = td2.textContent || td2.innerHTML;
+                if (txtValue1.indexOf(filter) > -1 || txtValue2.indexOf(filter) > -1){
+                    tr[i].style.display = "";
+                }
+                else{
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
 </script>
 
+</div>
 </body>
 
 </html>
