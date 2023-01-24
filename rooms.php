@@ -3,16 +3,13 @@
     $page = "rooms";
     include_once('header.php');
     include('functions.php');
+	
     session_start();
-    session_destroy();
+	check_if_user_logged($_SESSION);
 
-    if (empty($_SESSION)) {
-        $_SESSION["modalform"] = '';
-        $_SESSION["roomName"] = '';
-        $_SESSION["bedNumber"] = '';
-        $_SESSION["personPrice"] = '';
-        $_SESSION["price"] = '';
-    }
+	// reset modal form flag
+	$_SESSION["modalform"] = '';
+	
 
     function show_rooms()
     {

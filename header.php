@@ -20,7 +20,11 @@
     <script src="https://kit.fontawesome.com/57bf098a3b.js" crossorigin="anonymous"></script>
 </head>
 
+
 <body class="main-background">
+<?php 
+//if ($page != "log") { 
+?>
     <nav class="navbar navbar-dark navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="home.php">Hotel Laguna</a>
@@ -56,9 +60,14 @@
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
                     </li>
+					<li class="nav-item">
+                        <a class="nav-link" href="log.php">Wyloguj</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
-
+<?php 
+//} 
+?>
     <div class="main-conteiner">

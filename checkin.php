@@ -5,14 +5,11 @@
     include('functions.php');
 
     session_start();
-    session_destroy();
+	check_if_user_logged($_SESSION);
 
-    if (empty($_SESSION)) {
-        $_SESSION["modalform"] = '';
-        $_SESSION["name"] = '';
-        $_SESSION["surname"] = '';
-        $_SESSION["adult"] = 'T';
-    }
+	// reset modal form flag	
+	$_SESSION["modalform"] = '';
+	
 
     function show_checkins(){
         global $connection;

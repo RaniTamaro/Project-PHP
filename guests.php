@@ -3,15 +3,13 @@ $title = "Goście";
 $page = "guests";
 include_once('header.php');
 include('functions.php');
-session_start();
-session_destroy();
 
-if (empty($_SESSION)) {
-    $_SESSION["modalform"] = '';
-    $_SESSION["name"] = '';
-    $_SESSION["surname"] = '';
-    $_SESSION["adult"] = 'T';
-}
+session_start();
+check_if_user_logged($_SESSION);
+
+// reset modal form flag
+$_SESSION["modalform"] = '';
+
 
 // display list of all guests from database
 function show_guest()
@@ -145,7 +143,8 @@ function save_checkin($no)
 	$checkId = mysqli_insert_id($connection);
 	$command = "insert into pokoj_goscie values(null, '$roomId', '$no', '$checkId');";  
     mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
-	    
+	
+	
     header("Location: guests.php");
 
 }
@@ -253,7 +252,7 @@ close_connection();
         }
     });
 
-    function searchFuntion(){
+    function searchFunction(){
         let input, filter, table, tr, td, i, txtValue1, txtValue2;
         input = document.getElementById('guestSearch');
         filter = input.value;

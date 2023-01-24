@@ -16,4 +16,9 @@ function close_connection(){
 	global $connection;
 	mysqli_close($connection);
 }
+
+function check_if_user_logged($SESSION){
+	if(!isset($SESSION["logged"]) || !$SESSION["logged"]) header("Location: log.php");
+}
+
 ?>
