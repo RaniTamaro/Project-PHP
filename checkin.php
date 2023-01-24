@@ -5,7 +5,7 @@
     include('functions.php');
 
     session_start();
-    session_destroy();
+	check_if_user_logged($_SESSION);
 
     if (empty($_SESSION)) {
         $_SESSION["modalform"] = '';
@@ -15,6 +15,8 @@
         $_SESSION["checkinStartDate"] = '';
         $_SESSION["checkinEndDate"] = '';
     }
+
+	$_SESSION["modalform"] = '';
 
     //Display list of checkins from database
     function show_checkins(){

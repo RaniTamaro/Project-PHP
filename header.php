@@ -20,14 +20,18 @@
     <script src="https://kit.fontawesome.com/57bf098a3b.js" crossorigin="anonymous"></script>
 </head>
 
+
 <body class="main-background">
+
     <nav class="navbar navbar-dark navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="home.php">Hotel Laguna</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
+			<?php 
+			if ($page != "log") { 
+			?>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
@@ -56,8 +60,15 @@
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
                     </li>
+					<li class="nav-item">
+                        <a class="nav-link" href="log.php">Wyloguj</a>
+                    </li>
+
                 </ul>
             </div>
+			<?php 
+			} 
+			?>
         </div>
     </nav>
 
