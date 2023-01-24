@@ -7,22 +7,14 @@
     session_start();
 	check_if_user_logged($_SESSION);
 
-    if (empty($_SESSION)) {
-        $_SESSION["modalform"] = '';
-        $_SESSION["checkinName"] = '';
-        $_SESSION["checkinSurname"] = '';
-        $_SESSION["checkinRoomName"] = '';
-        $_SESSION["checkinStartDate"] = '';
-        $_SESSION["checkinEndDate"] = '';
-    }
-
+    // reset modal form flag
 	$_SESSION["modalform"] = '';
 
     //Display list of checkins from database
     function show_checkins(){
         global $connection;
 
-        $request = "select pg.Id, g.imie, g.nazwisko, p.nazwa, o.datazameldowania, o.datawymeldowania 
+        $request = "select pg.Id, g.imie, g.nazwisko, p.nazwa, o.datazameldowania, o.datawymeldowania
                     from pokoj_goscie pg
                     join goscie g on pg.IdGoscia = g.Id
                     join pokoj p on pg.IdPokoju = p.Id
@@ -67,19 +59,23 @@
     function edit_checkin($no){
         global $connection;
 
-        $command = "select g.imie, g.nazwisko, p.nazwa, o.datazameldowania, o.datawymeldowania 
+        $command = "select g.imie, g.nazwisko, p.nazwa, o.datazameldowania, o.datawymeldowania, pg.sniadanie, pg.parking, pg.transport
                     from pokoj_goscie pg
                     join goscie g on pg.IdGoscia = g.Id
                     join pokoj p on pg.IdPokoju = p.Id
-                    join okres_wynajmu o on pg.IdOkresuWynajmu = o.Id;";
+                    join okres_wynajmu o on pg.IdOkresuWynajmu = o.Id
+                    where pg.Id = $no;";
         $row = mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
-                
+
         $room = mysqli_fetch_row($row);
         $_SESSION["checkinName"] = $room[0];
         $_SESSION["checkinSurname"] = $room[1];
         $_SESSION["checkinRoomName"] = $room[2];
         $_SESSION["checkinStartDate"] = $room[3];
         $_SESSION["checkinEndDate"] = $room[4];
+        $_SESSION["editBreakfast"] =  $room[5];
+        $_SESSION["editParking"] =  $room[6];
+        $_SESSION["editTransport"] =  $room[7];
     
         $_SESSION["modalform"] = 'editCheckinData';
     }
@@ -87,11 +83,15 @@
     //Edit checkin in database
     function save_checkin($no){
         global $connection;
+
         $checkinName = $_POST['checkinName'];
         $checkinSurname = $_POST['checkinSurname'];
         $checkinRoomName = $_POST['checkinRoomName'];
         $checkinStartDate = $_POST['checkinStartDate'];
         $checkinEndDate = $_POST['checkinEndDate'];
+        isset($_POST['editBreakfast']) ? $breakfast = 'T' : $breakfast = 'N';
+        isset($_POST['editParking']) ? $parking = 'T' : $parking = 'N';
+        isset($_POST['editTransport']) ? $transport = 'T' : $transport = 'N';
 
         $request = "insert into okres_wynajmu (datazameldowania, datawymeldowania) 
         SELECT '$checkinStartDate', '$checkinEndDate' 
@@ -100,7 +100,10 @@
 
         $command = "update pokoj_goscie set idpokoju=(select id from pokoj where nazwa = '$checkinRoomName'), 
                     idgoscia=(select id from goscie where imie = '$checkinName' and nazwisko = '$checkinSurname'), 
-                    idokresuwynajmu=(select id from okres_wynajmu where datazameldowania = '$checkinStartDate' and datawymeldowania = '$checkinEndDate')
+                    idokresuwynajmu=(select id from okres_wynajmu where datazameldowania = '$checkinStartDate' and datawymeldowania = '$checkinEndDate'),
+                    sniadanie = '$breakfast',
+                    parking = '$parking',
+                    transport = '$transport'
                     where id=$no;";
         
         mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
@@ -126,6 +129,7 @@
     switch($option) {
         case 'Edytuj dane': edit_checkin($no); break;
         case 'Odwołaj wizytę': cancel_checkin($no); break;
+        case 'Zapisz': save_checkin($no); break;
     }
 
     show_checkins();
@@ -162,6 +166,19 @@
                             <div class="form-floating mb-3">
                                 <input type="date" class="form-control" id="checkinEndDateInput" name="checkinEndDate" placeholder="Data do..." value="<?=$_SESSION["checkinEndDate"]?>">
                                 <label for="checkinEndDateInput">Zameldowanie do</label>
+                            </div>
+                            <div class="margin-5px mb-3">
+                                <h5>Dodatkowe udogodnienia:</h5>
+                            </div>
+                            <div class="margin-5px mb-3">
+                                <input type="checkbox" class="mb-3" id="breakfastInput" name="editBreakfast" <?php $_SESSION["editBreakfast"] == 'T' ? print('checked') : '' ?>/>
+                                <label for="breakfastInput">Wliczone śniadanie</label>
+                                <input type="checkbox" class="mb-3 margin-5px" id="parkingInput" name="editParking" <?php $_SESSION["editParking"] == 'T' ? print('checked') : '' ?>/>
+                                <label for="parkingInput">Płatny parking</label>
+                            </div>
+                            <div class="margin-5px mb-3">
+                                <input type="checkbox" class="mb-3" id="transportInput" name="editTransport" <?php $_SESSION["editTransport"] == 'T' ? print('checked') : '' ?>/>
+                                <label for="transportInput">Transport z lotniska lub dworca</label>
                             </div>
                     </div>
                     <div class="modal-footer">

@@ -21,7 +21,7 @@ function show_guest()
     if (!$result)
         return;
 
-    $headers = array("Imię", "Nazwisko", "Dorosły");
+    $headers = array("Imię", "Nazwisko");
     ?>
     <form method='POST'>
         <h3>Goście</h3>
@@ -41,7 +41,7 @@ function show_guest()
                 while ($row = mysqli_fetch_row($result)) {
                     echo "<tr class='text-center'>";
                     foreach ($row as $c => $cell)
-                        if ($c != 0)
+                        if ($c != 0 && $c < 3)
                             echo "<td>$cell</td>";
                     echo "<td><input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Zamelduj'>
                             <input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Edytuj'>
@@ -62,18 +62,20 @@ function edit_guest($no = -1)
     global $connection;
 
     if($no != -1) {
-		$command = "select imie, nazwisko, dorosly from goscie where Id=$no;";
+		$command = "select imie, nazwisko, iloscdoroslych, iloscdzieci from goscie where Id=$no;";
 		$row = mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
                 
         $guest = mysqli_fetch_row($row);
         $_SESSION["name"] = $guest[0];
         $_SESSION["surname"] = $guest[1];
-        $_SESSION["adult"] = $guest[2];
+        $_SESSION["adultNumber"] = $guest[2];
+        $_SESSION["kidsNumber"] = $guest[3];
 	}
 	else {
         $_SESSION["name"] = '';
         $_SESSION["surname"] = '';
-        $_SESSION["adult"] = 'T';
+        $_SESSION["adultNumber"] = 1;
+        $_SESSION["kidsNumber"] = null;
 	}
 
     $_SESSION["modalform"] = 'editGuest';
@@ -85,11 +87,13 @@ function save_guest($no)
     global $connection;
     $name = $_POST['name'];
     $surname = $_POST['surname'];
-    isset($_POST['adult']) ? $adult = 'T' : $adult = 'N';
+    $adultNumber = $_POST['adultNumber'];
+    $kidsNumber = $_POST['kidsNumber'];
+    // isset($_POST['adult']) ? $adult = 'T' : $adult = 'N';
 
     if($no != -1)
-        $command = "update goscie set imie='$name', nazwisko='$surname', dorosly='$adult' where id=$no;";
-    else $command = "insert into goscie values(null, '$name', '$surname', '$adult');";
+        $command = "update goscie set imie='$name', nazwisko='$surname', iloscdoroslych=$adultNumber, iloscdzieci=$kidsNumber where id=$no;";
+    else $command = "insert into goscie values(null, '$name', '$surname', $adultNumber, $kidsNumber);";
     
     mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
     
@@ -112,6 +116,9 @@ function checkin_guest($no)
 	$_SESSION["roomName"] = '';
     $_SESSION["checkInDate"] = '';
     $_SESSION["checkOutDate"] = '';
+    $_SESSION["breakfast"] = 'N';
+    $_SESSION["parking"] = 'N';
+    $_SESSION["transport"] = 'N';
 
     $_SESSION["modalform"] = 'addCheckIn';
 }
@@ -135,9 +142,13 @@ function save_checkin($no)
 	$command = "insert into okres_wynajmu values(null, '$checkInDate', '$checkOutDate');";  
     mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
 	
+    isset($_POST['breakfast']) ? $breakfast = 'T' : $breakfast = 'N';
+    isset($_POST['parking']) ? $parking = 'T' : $parking = 'N';
+    isset($_POST['transport']) ? $transport = 'T' : $transport = 'N';
+
 	// fill pokoj_goscie table
 	$checkId = mysqli_insert_id($connection);
-	$command = "insert into pokoj_goscie values(null, '$roomId', '$no', '$checkId');";  
+	$command = "insert into pokoj_goscie values(null, '$roomId', '$no', '$checkId', '$breakfast', '$parking', '$transport');";  
     mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
     
     header("Location: guests.php");
@@ -188,9 +199,13 @@ close_connection();
                                 <input type="text" class="form-control" id="surnameInput" name="surname" placeholder="Nazwisko..." value="<?=$_SESSION["surname"]?>">
                                 <label for="surnameInput">Nazwisko</label>
                             </div>
-                            <div class="margin-5px">
-                                <input type="checkbox" class="mb-3" id="adultInput" name="adult" <?php $_SESSION["adult"] == 'T' ? print('checked') : '' ?>/>
-                                <label for="adultInput">Osoba dorosła</label>
+                            <div class="form-floating mb-3">
+                                <input type="number" min=1 max=10 class="form-control" id="adultNumberInput" name="adultNumber" placeholder="Ilość dorosłych..." value="<?=$_SESSION["adultNumber"]?>">
+                                <label for="adultNumberInput">Ilość dorosłych</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="number" min=0 max=10 class="form-control" id="kidsNumberInput" name="kidsNumber" placeholder="Ilość dzieci..." value="<?=$_SESSION["kidsNumber"]?>">
+                                <label for="kidsNumberInput">Ilość dzieci</label>
                             </div>
                     </div>
                     <div class="modal-footer">
@@ -225,6 +240,19 @@ close_connection();
 								<input id="endDate" class="form-control" type="date" name="checkOutDate"/>
 								<label for="endDate">Do</label>
 							</div>
+                            <div class="margin-5px mb-3">
+                                <h5>Dodatkowe udogodnienia:</h5>
+                            </div>
+                            <div class="margin-5px mb-3">
+                                <input type="checkbox" class="mb-3" id="breakfastInput" name="breakfast" <?php $_SESSION["breakfast"] == 'T' ? print('checked') : '' ?>/>
+                                <label for="breakfastInput">Wliczone śniadanie</label>
+                                <input type="checkbox" class="mb-3 margin-5px" id="parkingInput" name="parking" <?php $_SESSION["parking"] == 'T' ? print('checked') : '' ?>/>
+                                <label for="parkingInput">Płatny parking</label>
+                            </div>
+                            <div class="margin-5px mb-3">
+                                <input type="checkbox" class="mb-3" id="transportInput" name="transport" <?php $_SESSION["transport"] == 'T' ? print('checked') : '' ?>/>
+                                <label for="transportInput">Transport z lotniska lub dworca</label>
+                            </div>
                     </div>
                     <div class="modal-footer">
                         <input type="button" class="btn btn-secondary" data-bs-dismiss="modal" value="Anuluj"/>
@@ -250,7 +278,7 @@ close_connection();
     });
 
 
-    //Show serched rooms and hide other with use style
+    //Show serched guests and hide other with use style
     function searchFuntion(){
         let input, filter, table, tr, td, i, txtValue1, txtValue2;
         input = document.getElementById('guestSearch');
@@ -260,7 +288,7 @@ close_connection();
 
         for (i = 0; i < tr.length; i++){
             td1 = tr[i].getElementsByTagName('td')[0];
-            td2 = tr[i].getElementsByTagName('td')[1]
+            td2 = tr[i].getElementsByTagName('td')[1];
             if (td1 || td2){
                 txtValue1 = td1.textContent || td1.innerHTML;
                 txtValue2 = td2.textContent || td2.innerHTML;
