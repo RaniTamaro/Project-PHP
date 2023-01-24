@@ -11,6 +11,8 @@
 	$_SESSION["modalform"] = '';
 	
 
+
+    //Display list of all rooms from database
     function show_rooms()
     {
         global $connection;
@@ -54,15 +56,16 @@
         <?= mysqli_free_result($result);
     }
     
-    
+    //Display form to edit or add room
     function edit_room($no = -1)
     {
         global $connection;
     
+        // get data from database if edit
         if($no != -1) {
             $command = "select nazwa, lozka, cenaosoba, cenapokoj from pokoj where Id=$no;";
             $row = mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
-                    
+
             $room = mysqli_fetch_row($row);
             $_SESSION["roomName"] = $room[0];
             $_SESSION["bedNumber"] = $room[1];
@@ -79,6 +82,7 @@
         $_SESSION["modalform"] = 'editRoom';
     }
     
+    //Save room to database
     function save_room($no)
     {
         global $connection;
@@ -97,6 +101,7 @@
         header("Location: rooms.php");
     }
     
+    //Delete room from database
     function delete_room($no)
     {
         global $connection;
@@ -164,14 +169,17 @@
     </div>
     
     <script>
+        //Choose modal to display
         $(document).ready(function () {
+            //Function get value with information about modal name
             let value = '<?php echo $_SESSION['modalform']?>';
             if (value == 'editRoom') {
                 $('#editRoom').modal('show');
             }
         });
 
-        function searchFuntion(){
+        //Show serched rooms and hide other with use style
+    function searchFuntion(){
         let input, filter, table, tr, td, i, txtValue;
         input = document.getElementById('roomSearch');
         filter = input.value;

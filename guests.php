@@ -108,16 +108,12 @@ function delete_guest($no)
 // display form for adding checkin and checkout
 function checkin_guest($no)
 {
-    //TODO: Add logic or change place of this function.
-	
-	global $connection;
     $_SESSION["roomId"] = '';
 	$_SESSION["roomName"] = '';
     $_SESSION["checkInDate"] = '';
     $_SESSION["checkOutDate"] = '';
 
     $_SESSION["modalform"] = 'addCheckIn';
-	
 }
 	
 // save checkin and checkout in database
@@ -143,8 +139,7 @@ function save_checkin($no)
 	$checkId = mysqli_insert_id($connection);
 	$command = "insert into pokoj_goscie values(null, '$roomId', '$no', '$checkId');";  
     mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
-	
-	
+    
     header("Location: guests.php");
 
 }
@@ -242,7 +237,9 @@ close_connection();
 
 
 <script>
+    //Choose modal to display
     $(document).ready(function () {
+        //Function get value with information about modal name
         let value = '<?php echo $_SESSION['modalform']?>';
         if (value == 'editGuest') {
             $('#editGuest').modal('show');
@@ -252,7 +249,9 @@ close_connection();
         }
     });
 
-    function searchFunction(){
+
+    //Show serched rooms and hide other with use style
+    function searchFuntion(){
         let input, filter, table, tr, td, i, txtValue1, txtValue2;
         input = document.getElementById('guestSearch');
         filter = input.value;

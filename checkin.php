@@ -7,10 +7,18 @@
     session_start();
 	check_if_user_logged($_SESSION);
 
-	// reset modal form flag	
-	$_SESSION["modalform"] = '';
-	
+    if (empty($_SESSION)) {
+        $_SESSION["modalform"] = '';
+        $_SESSION["checkinName"] = '';
+        $_SESSION["checkinSurname"] = '';
+        $_SESSION["checkinRoomName"] = '';
+        $_SESSION["checkinStartDate"] = '';
+        $_SESSION["checkinEndDate"] = '';
+    }
 
+	$_SESSION["modalform"] = '';
+
+    //Display list of checkins from database
     function show_checkins(){
         global $connection;
 
@@ -27,11 +35,9 @@
         ?>
         <form method='POST'>
             <h3>Zameldowania</h3>
-            <!-- <div style="text-align:right">
-                <input type="submit" class="btn btn-outline-dark" name='button[-1]' value="Dodaj nowe zameldowanie" />
-            </div> -->
 
-            <table class='table table-striped table-color'>
+            <input type="text" class="form-control search-input" id="checkinSearch" onkeyup="searchFuntion()" placeholder="Wyszukaj zameldowania"/>
+            <table class='table table-striped table-color' id="checkinTable">
                 <thead>
                     <tr class="text-center">
                     <?php
@@ -57,10 +63,59 @@
         <?= mysqli_free_result($result);
     }
 
-    function get_guests(){
+    //Display form to edit checkin
+    function edit_checkin($no){
+        global $connection;
 
+        $command = "select g.imie, g.nazwisko, p.nazwa, o.datazameldowania, o.datawymeldowania 
+                    from pokoj_goscie pg
+                    join goscie g on pg.IdGoscia = g.Id
+                    join pokoj p on pg.IdPokoju = p.Id
+                    join okres_wynajmu o on pg.IdOkresuWynajmu = o.Id;";
+        $row = mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
+                
+        $room = mysqli_fetch_row($row);
+        $_SESSION["checkinName"] = $room[0];
+        $_SESSION["checkinSurname"] = $room[1];
+        $_SESSION["checkinRoomName"] = $room[2];
+        $_SESSION["checkinStartDate"] = $room[3];
+        $_SESSION["checkinEndDate"] = $room[4];
+    
+        $_SESSION["modalform"] = 'editCheckinData';
     }
 
+    //Edit checkin in database
+    function save_checkin($no){
+        global $connection;
+        $checkinName = $_POST['checkinName'];
+        $checkinSurname = $_POST['checkinSurname'];
+        $checkinRoomName = $_POST['checkinRoomName'];
+        $checkinStartDate = $_POST['checkinStartDate'];
+        $checkinEndDate = $_POST['checkinEndDate'];
+
+        $request = "insert into okres_wynajmu (datazameldowania, datawymeldowania) 
+        SELECT '$checkinStartDate', '$checkinEndDate' 
+        where not exists (select id from okres_wynajmu where datazameldowania = '$checkinStartDate' and datawymeldowania = '$checkinEndDate') limit 1;";
+        mysqli_query($connection, $request);
+
+        $command = "update pokoj_goscie set idpokoju=(select id from pokoj where nazwa = '$checkinRoomName'), 
+                    idgoscia=(select id from goscie where imie = '$checkinName' and nazwisko = '$checkinSurname'), 
+                    idokresuwynajmu=(select id from okres_wynajmu where datazameldowania = '$checkinStartDate' and datawymeldowania = '$checkinEndDate')
+                    where id=$no;";
+        
+        mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
+        header("Location: checkin.php");
+    }
+
+    //Delete checkin from database
+    function cancel_checkin($no){
+        global $connection;
+	
+	    $command = "delete from pokoj_goscie where id=$no;";		
+	    mysqli_query($connection, $command) or exit("Błąd w zapytaniu: $command");
+    }
+
+    open_connection();
     $option = '';
     if(isset($_POST['button'])) {	
         $no = key($_POST['button']);
@@ -69,46 +124,17 @@
     }
 
     switch($option) {
-        case 'Dodaj nowe zameldowanie': $_SESSION["modalform"] = 'numberGuestModal'; break;
-        case 'Wybierz gości': $_SESSION["guestNumber"] = $_POST['guestNumber']; $_SESSION["modalform"] = 'addGuests'; break;
-        case 'Zapisz': save_guest($no); break;
-        case 'Usuń': delete_guest($no); break;
-        // case 'Zamelduj': zamelduj_goscia($nr); break;
+        case 'Edytuj dane': edit_checkin($no); break;
+        case 'Odwołaj wizytę': cancel_checkin($no); break;
     }
 
-
-    open_connection();
     show_checkins();
     close_connection();
 ?>
 
 
-<!-- Guest Number Modal -->
-<div class="modal fade" id="numberGuestModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Wpisz dane gościa</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-                <form method=POST action=''>
-                    <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="guestNumber" name="guestNumber" placeholder="Ilość gości...">
-                            <label for="guestNumber">Ilość gości</label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="button" class="btn btn-secondary" data-bs-dismiss="modal" value="Anuluj"/>
-                        <input type="submit" name="button[<?=$no?>]" class="btn btn-primary" value="Wybierz gości"/>
-                    </div>
-                </form>
-        </div>
-    </div>
-</div>
-
-<!-- Add Guest Data Modal -->
-<div class="modal fade" id="addGuests" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<!-- Edit Checkin Data Modal -->
+<div class="modal fade" id="editCheckinData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -118,16 +144,24 @@
                 <form method=POST action=''>
                     <div class="modal-body">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="nameInput" name="name" placeholder="Imię..." value="<?=$_SESSION["name"]?>">
-                                <label for="nameInput">Imię</label>
+                                <input type="text" class="form-control" id="checkinNameInput" name="checkinName" placeholder="Imię..." value="<?=$_SESSION["checkinName"]?>">
+                                <label for="checkinNameInput">Imię gościa</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="surnameInput" name="surname" placeholder="Nazwisko..." value="<?=$_SESSION["surname"]?>">
-                                <label for="surnameInput">Nazwisko</label>
+                                <input type="text" class="form-control" id="checkinSurnameInput" name="checkinSurname" placeholder="Nazwisko..." value="<?=$_SESSION["checkinSurname"]?>">
+                                <label for="checkinSurnameInput">Nazwisko gościa</label>
                             </div>
-                            <div class="margin-5px">
-                                <input type="checkbox" class="mb-3" id="adultInput" name="adult" <?php $_SESSION["adult"] == 'T' ? print('checked') : '' ?>/>
-                                <label for="adultInput">Osoba dorosła</label>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="checkinRoomNamenput" name="checkinRoomName" placeholder="Nazwa pokoju..." value="<?=$_SESSION["checkinRoomName"]?>">
+                                <label for="checkinRoomNamenput">Nazwa pokoju</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="date" class="form-control" id="checkinStartDateInput" name="checkinStartDate" placeholder="Data od..." value="<?=$_SESSION["checkinStartDate"]?>">
+                                <label for="checkinStartDateInput">Zalemdowanie od</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="date" class="form-control" id="checkinEndDateInput" name="checkinEndDate" placeholder="Data do..." value="<?=$_SESSION["checkinEndDate"]?>">
+                                <label for="checkinEndDateInput">Zameldowanie do</label>
                             </div>
                     </div>
                     <div class="modal-footer">
@@ -138,82 +172,40 @@
         </div>
     </div>
 </div>
-
-<!-- Add Date Modal -->
-<div class="modal fade" id="editGuest" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Wpisz dane gościa</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-                <form method=POST action=''>
-                    <div class="modal-body">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="nameInput" name="name" placeholder="Imię..." value="<?=$_SESSION["name"]?>">
-                                <label for="nameInput">Imię</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="surnameInput" name="surname" placeholder="Nazwisko..." value="<?=$_SESSION["surname"]?>">
-                                <label for="surnameInput">Nazwisko</label>
-                            </div>
-                            <div class="margin-5px">
-                                <input type="checkbox" class="mb-3" id="adultInput" name="adult" <?php $_SESSION["adult"] == 'T' ? print('checked') : '' ?>/>
-                                <label for="adultInput">Osoba dorosła</label>
-                            </div>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="button" class="btn btn-secondary" data-bs-dismiss="modal" value="Anuluj"/>
-                        <input type="submit" name="button[<?=$no?>]" class="btn btn-primary" value="Zapisz"/>
-                    </div>
-                </form>
-        </div>
-    </div>
-</div>
-
-<!-- Choose Room Modal -->
-<div class="modal fade" id="editGuest" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Wpisz dane gościa</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-                <form method=POST action=''>
-                    <div class="modal-body">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="nameInput" name="name" placeholder="Imię..." value="<?=$_SESSION["name"]?>">
-                                <label for="nameInput">Imię</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="surnameInput" name="surname" placeholder="Nazwisko..." value="<?=$_SESSION["surname"]?>">
-                                <label for="surnameInput">Nazwisko</label>
-                            </div>
-                            <div class="margin-5px">
-                                <input type="checkbox" class="mb-3" id="adultInput" name="adult" <?php $_SESSION["adult"] == 'T' ? print('checked') : '' ?>/>
-                                <label for="adultInput">Osoba dorosła</label>
-                            </div>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="button" class="btn btn-secondary" data-bs-dismiss="modal" value="Anuluj"/>
-                        <input type="submit" name="button[<?=$no?>]" class="btn btn-primary" value="Zapisz"/>
-                    </div>
-                </form>
-        </div>
-    </div>
-</div>
-
 
 <script>
+    //Choose modal to display
     $(document).ready(function () {
+        //Function get value with information about modal name
         let value = '<?php echo $_SESSION['modalform']?>';
-        if (value == 'numberGuestModal') {
-            $('#numberGuestModal').modal('show');
-        }
-        else if (value == 'addGuests'){
-            $('#addGuests').modal('show');
+        if (value == 'editCheckinData') {
+            $('#editCheckinData').modal('show');
         }
     });
+
+    //Show serched checkin and hide other with use style
+    function searchFuntion(){
+        let input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById('checkinSearch');
+        filter = input.value;
+        table = document.getElementById('checkinTable');
+        tr = table.getElementsByTagName('tr');
+
+        for (i = 0; i < tr.length; i++){
+            td1 = tr[i].getElementsByTagName('td')[0];
+            td2 = tr[i].getElementsByTagName('td')[1]
+            if (td1 || td2){
+                txtValue1 = td1.textContent || td1.innerHTML;
+                txtValue2 = td2.textContent || td2.innerHTML;
+                if (txtValue1.indexOf(filter) > -1 || txtValue2.indexOf(filter) > -1){
+                    tr[i].style.display = "";
+                }
+                else{
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
 </script>
 
     </div>
