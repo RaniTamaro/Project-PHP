@@ -188,6 +188,21 @@
         let value = '<?php echo $_SESSION['modalform']?>';
         if (value == 'editCheckinData') {
             $('#editCheckinData').modal('show');
+			
+			// date validation
+			var start = document.getElementById('checkinStartDateInput');
+			var end = document.getElementById('checkinEndDateInput');
+			console.log(start);
+			console.log(end);
+			
+			start.addEventListener('change', function() {
+				if (start.value)
+					end.min = start.value;
+			}, false);
+			end.addEventLiseter('change', function() {
+				if (end.value)
+					start.max = end.value;
+			}, false);
         }
     });
 
