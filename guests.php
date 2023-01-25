@@ -37,7 +37,7 @@ function show_guest()
                 foreach ($headers as $header)
                     echo "<th scope='col'>$header</th>";
 
-                echo "<th scope='col'></th></th></tr></thead><tbody>";
+                echo "<th scope='col' style='width:50%'></th></tr></thead><tbody>";
                 while ($row = mysqli_fetch_row($result)) {
                     echo "<tr class='text-center'>";
                     foreach ($row as $c => $cell)
@@ -112,8 +112,17 @@ function delete_guest($no)
 // display form for adding checkin and checkout
 function checkin_guest($no)
 {
-    $_SESSION["roomId"] = '';
-	$_SESSION["roomName"] = '';
+    global $connection;
+
+    $roomArray = [];
+    $request = "select id, nazwa from pokoj;";
+    $result = mysqli_query($connection, $request);
+    while($row = mysqli_fetch_array($result)){
+        $roomArray += [$row[0] => $row[1]];
+    }
+
+    $_SESSION["roomList"] = $roomArray;
+	// $_SESSION["roomName"] = '';
     $_SESSION["checkInDate"] = '';
     $_SESSION["checkOutDate"] = '';
     $_SESSION["breakfast"] = 'N';
@@ -122,19 +131,14 @@ function checkin_guest($no)
 
     $_SESSION["modalform"] = 'addCheckIn';
 }
+
 	
 // save checkin and checkout in database
 function save_checkin($no)
 {
 	global $connection;
 	// get dates and roomId from form
-	$roomName = $_POST['roomName'];
-	
-	$command = "select id, nazwa from pokoj where nazwa='$roomName';";
-	$row = mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
-    $room = mysqli_fetch_row($row);
-	$roomId = $room[0];
-	
+	$roomId = $_POST['roomIdSelect'];
     $checkInDate = $_POST['checkInDate'];
     $checkOutDate = $_POST['checkOutDate'];
 	
@@ -228,31 +232,33 @@ close_connection();
             </div>
                 <form method=POST action=''>
                     <div class="modal-body">
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="roomInput" name="roomName" placeholder="Nazwa" value="">
-                                <label for="roomInput">Pokój</label>
-                            </div>
-                            <div class="form-floating mb-3">
-								<input id="startDate" class="form-control" type="date" name="checkInDate"/>
-								<label for="startDate">Od</label>
-							</div>
-							<div class="form-floating mb-3">
-								<input id="endDate" class="form-control" type="date" name="checkOutDate"/>
-								<label for="endDate">Do</label>
-							</div>
-                            <div class="margin-5px mb-3">
-                                <h5>Dodatkowe udogodnienia:</h5>
-                            </div>
-                            <div class="margin-5px mb-3">
-                                <input type="checkbox" class="mb-3" id="breakfastInput" name="breakfast" <?php $_SESSION["breakfast"] == 'T' ? print('checked') : '' ?>/>
-                                <label for="breakfastInput">Wliczone śniadanie</label>
-                                <input type="checkbox" class="mb-3 margin-5px" id="parkingInput" name="parking" <?php $_SESSION["parking"] == 'T' ? print('checked') : '' ?>/>
-                                <label for="parkingInput">Płatny parking</label>
-                            </div>
-                            <div class="margin-5px mb-3">
-                                <input type="checkbox" class="mb-3" id="transportInput" name="transport" <?php $_SESSION["transport"] == 'T' ? print('checked') : '' ?>/>
-                                <label for="transportInput">Transport z lotniska lub dworca</label>
-                            </div>
+                        <div class="form-floating mb-3">
+                            <?php
+                                generatedSelect($_SESSION["roomList"], "roomIdSelect");
+                            ?>
+                            <label for="roomIdSelect">Pokój</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input id="startDate" class="form-control" type="date" name="checkInDate"/>
+                            <label for="startDate">Od</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input id="endDate" class="form-control" type="date" name="checkOutDate"/>
+                            <label for="endDate">Do</label>
+                        </div>
+                        <div class="margin-5px mb-3">
+                            <h5>Dodatkowe udogodnienia:</h5>
+                        </div>
+                        <div class="margin-5px mb-3">
+                            <input type="checkbox" class="mb-3" id="breakfastInput" name="breakfast" <?php $_SESSION["breakfast"] == 'T' ? print('checked') : '' ?>/>
+                            <label for="breakfastInput">Wliczone śniadanie</label>
+                            <input type="checkbox" class="mb-3 margin-5px" id="parkingInput" name="parking" <?php $_SESSION["parking"] == 'T' ? print('checked') : '' ?>/>
+                            <label for="parkingInput">Płatny parking</label>
+                        </div>
+                        <div class="margin-5px mb-3">
+                            <input type="checkbox" class="mb-3" id="transportInput" name="transport" <?php $_SESSION["transport"] == 'T' ? print('checked') : '' ?>/>
+                            <label for="transportInput">Transport z lotniska lub dworca</label>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <input type="button" class="btn btn-secondary" data-bs-dismiss="modal" value="Anuluj"/>
