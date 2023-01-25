@@ -3,10 +3,119 @@
     $page = "reports";
     include_once('header.php');
 	include('functions.php');
+	
+	session_start();
 	check_if_user_logged($_SESSION);
+	
+	
+	$_SESSION["reportStartDate"] = Null; 
+	if (isset($_POST["reportStartDate"]))
+		$_SESSION["reportStartDate"] =  $_POST['reportStartDate'];
+	$_SESSION["reportEndDate"] = Null;	
+	if (isset($_POST["reportEndDate"]))
+		$_SESSION["reportEndDate"] =  $_POST['reportEndDate'];
+	
+	$_SESSION["cenaSuma"] = 0;
+	
+	function calculate_price($perPerson, $perRoom, $adultNumber, $kidsNumber, $sniadanie, $parking, $transport){
+		// TODO
+		return $perRoom;
+	}
+
+	
+	//Display list of checkins from database
+    function show_checkins(){
+        global $connection;
+		
+		$reportStartDate = $_SESSION["reportStartDate"];
+		$reportEndDate = $_SESSION["reportEndDate"];
+
+        $request = "select pg.Id, g.imie, g.nazwisko, g.iloscdoroslych, g.iloscdzieci, 
+					pg.sniadanie, pg.parking, pg.transport, p.cenaosoba, p.cenapokoj,
+					p.nazwa, o.datazameldowania, o.datawymeldowania
+                    from pokoj_goscie pg
+                    join goscie g on pg.IdGoscia = g.Id
+                    join pokoj p on pg.IdPokoju = p.Id
+                    join okres_wynajmu o on pg.IdOkresuWynajmu = o.Id
+					where o.datazameldowania >= '$reportStartDate'
+					and o.datawymeldowania <= '$reportEndDate' ;" ;
+        $result = mysqli_query($connection, $request);
+        if (!$result)
+            return;
+
+        $headers = array("Imię i nazwisko gościa", "Dorośli / Dzieci", "Dodatki", "Nazwa pokoju", "Data zameldowania", "Data wymeldowania", "Cena");
+        ?>
+        <form method='POST'>
+            <h3>Raport</h3>
+
+			<table class='table table-striped table-color' ><tr><td>
+		    <label for="checkinStartDateInput">Zalemdowanie od</label>
+			<input type="date" required class="form-control" id="checkinStartDateInput" name="reportStartDate" value="<?=$_SESSION["reportStartDate"]?>">
+			</td><td>
+		    <label for="checkinEndDateInput">Zalemdowanie do</label>
+			<input type="date" required class="form-control" id="checkinEndDateInput" name="reportEndDate" value="<?=$_SESSION["reportEndDate"]?>">
+			</td><td>
+			<p> </p>
+			<input  type='submit' class='btn btn-outline-dark' id="checkinEndDateInput" name="generuj" value="Generuj">
+			</td></tr></table>
+			
+            <table class='table table-striped table-color' id="checkinTable">
+                <thead>
+                    <tr class="text-center">
+                    <?php
+                    foreach ($headers as $header)
+                        echo "<th scope='col'>$header</th>";
+
+                    echo "<th scope='col'></th></tr></thead><tbody>";
+                    while ($row = mysqli_fetch_row($result)) {
+						$row_price = calculate_price($row[8], $row[9], $row[3], $row[4], $row[5], $row[6], $row[7]);
+						$_SESSION["cenaSuma"] = $_SESSION["cenaSuma"] + $row_price;
+                        echo "<tr class='text-center'>";
+                        echo "<td>$row[1]  $row[2]</td>";
+						echo "<td>$row[3] / $row[4]</td>";
+						echo "<td> $row[5] / $row[6] / $row[7]</td>";
+                        foreach ($row as $c => $cell)
+                            if($c > 9)
+                                echo "<td>$cell</td>";
+						echo  "<td> $row_price </td>";
+                        print("</tr>");
+                    } ?>
+                    </tbody>
+            </table>
+        </form>
+		
+		<p> </p><p> </p>
+		<p for="checkinEndDateInput">Suma: <?=$_SESSION["cenaSuma"]?></p>
+
+        <?= mysqli_free_result($result);
+    }
+	
+	
+	open_connection();
+	/*
+    $option = '';
+    if(isset($_POST['button'])) {	
+        $no = key($_POST['button']);
+        $option = $_POST['button'][$no];
+        $_SESSION["no"] = $no;
+    }
+
+    switch($option) {
+        case 'Edytuj dane': edit_checkin($no); break;
+        case 'Odwołaj wizytę': cancel_checkin($no); break;
+        case 'Zapisz': save_checkin($no); break;
+    }
+	*/
+
+    show_checkins();
+    close_connection();
+	
+	
+	
+	
+	
+	
 ?>
-
-
 
     </body>
 </html>
