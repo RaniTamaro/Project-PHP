@@ -151,11 +151,11 @@
                             <label for="roomIdSelect">Pokój</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="date" class="form-control" id="checkinStartDateInput" name="checkinStartDate" placeholder="Data od..." value="<?=$_SESSION["checkinStartDate"]?>">
+                            <input type="date" required class="form-control" id="checkinStartDateInput" name="checkinStartDate" placeholder="Data od..." value="<?=$_SESSION["checkinStartDate"]?>">
                             <label for="checkinStartDateInput">Zalemdowanie od</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="date" class="form-control" id="checkinEndDateInput" name="checkinEndDate" placeholder="Data do..." value="<?=$_SESSION["checkinEndDate"]?>">
+                            <input type="date" required class="form-control" id="checkinEndDateInput" name="checkinEndDate" placeholder="Data do..." value="<?=$_SESSION["checkinEndDate"]?>">
                             <label for="checkinEndDateInput">Zameldowanie do</label>
                         </div>
                         <div class="margin-5px mb-3">
