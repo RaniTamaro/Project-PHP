@@ -204,11 +204,11 @@ close_connection();
                                 <label for="surnameInput">Nazwisko</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="number" min=1 max=10 class="form-control" id="adultNumberInput" name="adultNumber" placeholder="Liczba dorosłych..." value="<?=$_SESSION["adultNumber"]?>">
+                                <input type="number" min=1 max=10 required class="form-control" id="adultNumberInput" name="adultNumber" placeholder="Liczba dorosłych..." value="<?=$_SESSION["adultNumber"]?>">
                                 <label for="adultNumberInput">Liczba dorosłych</label>
                             </div>
                             <div class="form-floating">
-                                <input type="number" min=0 max=10 class="form-control" id="kidsNumberInput" name="kidsNumber" placeholder="Liczba dzieci..." value="<?=$_SESSION["kidsNumber"]?>">
+                                <input type="number" min=0 max=10 required class="form-control" id="kidsNumberInput" name="kidsNumber" placeholder="Liczba dzieci..." value="<?=$_SESSION["kidsNumber"]?>">
                                 <label for="kidsNumberInput">Liczba dzieci</label>
                             </div>
                     </div>
@@ -239,11 +239,11 @@ close_connection();
                             <label for="roomIdSelect">Pokój</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input id="startDate" class="form-control" type="date" name="checkInDate"/>
+                            <input id="startDate" class="form-control" type="date" required name="checkInDate"/>
                             <label for="startDate">Od</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input id="endDate" class="form-control" type="date" name="checkOutDate"/>
+                            <input id="endDate" class="form-control" type="date" required name="checkOutDate"/>
                             <label for="endDate">Do</label>
                         </div>
                         <div class="margin-5px mb-3">
@@ -272,21 +272,6 @@ close_connection();
 
 <script>
 
-	// date validation
-	
-	var start = document.getElementById('startDate');
-	var end = document.getElementById('endDate');
-
-	start.addEventListener('change', function() {
-		if (start.value)
-			end.min = start.value;
-	}, false);
-	end.addEventLiseter('change', function() {
-		if (end.value)
-			start.max = end.value;
-	}, false);
-	
-
     //Choose modal to display
     $(document).ready(function () {
         //Function get value with information about modal name
@@ -296,6 +281,21 @@ close_connection();
         }
 		if (value == 'addCheckIn') {
             $('#addCheckIn').modal('show');
+			
+			// date validation
+			var start = document.getElementById('startDate');
+			var end = document.getElementById('endDate');
+			console.log(start);
+			console.log(end);
+			
+			start.addEventListener('change', function() {
+				if (start.value)
+					end.min = start.value;
+			}, false);
+			end.addEventLiseter('change', function() {
+				if (end.value)
+					start.max = end.value;
+			}, false);
         }
     });
 

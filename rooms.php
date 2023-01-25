@@ -22,7 +22,7 @@
         if (!$result)
             return;
     
-        $headers = array("Nazwa", "Ilość łóżek", "Cena za osobę", "Cena za pokój");
+        $headers = array("Nazwa", "Liczba łóżek", "Cena za osobę", "Cena za pokój");
         ?>
         <form method='POST'>
             <h3>Pokoje</h3>
@@ -147,15 +147,15 @@
                                     <label for="nameRoomInput">Nazwa pokoju</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="number" min=1 max=10 class="form-control" id="bedNumberInput" name="bedNumber" placeholder="Ilość łóżek..." value="<?=$_SESSION["bedNumber"]?>">
-                                    <label for="bedNumberInput">Ilość łóżek</label>
+                                    <input type="number" min=1 max=10 required class="form-control" id="bedNumberInput" name="bedNumber" placeholder="Liczba łóżek..." value="<?=$_SESSION["bedNumber"]?>">
+                                    <label for="bedNumberInput">Liczba łóżek</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="number"class="form-control" id="personPriceInput" name="personPrice" placeholder="Cena za osobę..." value="<?=$_SESSION["personPrice"]?>">
+                                    <input type="number" min=1 required class="form-control" id="personPriceInput" name="personPrice" placeholder="Cena za osobę..." value="<?=$_SESSION["personPrice"]?>">
                                     <label for="personPriceInput">Cena za jedną osobę</label>
                                 </div>
                                 <div class="form-floating">
-                                    <input type="number" class="form-control" id="priceInput" name="price" placeholder="Cena za pokój..." value="<?=$_SESSION["price"]?>">
+                                    <input type="number" min=1 required class="form-control" id="priceInput" name="price" placeholder="Cena za pokój..." value="<?=$_SESSION["price"]?>">
                                     <label for="priceInput">Cena za pokój</label>
                                 </div>
                         </div>
