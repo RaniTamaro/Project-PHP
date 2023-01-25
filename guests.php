@@ -75,7 +75,7 @@ function edit_guest($no = -1)
         $_SESSION["name"] = '';
         $_SESSION["surname"] = '';
         $_SESSION["adultNumber"] = 1;
-        $_SESSION["kidsNumber"] = null;
+        $_SESSION["kidsNumber"] = 0;
 	}
 
     $_SESSION["modalform"] = 'editGuest';
@@ -200,12 +200,12 @@ close_connection();
                                 <label for="surnameInput">Nazwisko</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="number" min=1 max=10 class="form-control" id="adultNumberInput" name="adultNumber" placeholder="Ilość dorosłych..." value="<?=$_SESSION["adultNumber"]?>">
-                                <label for="adultNumberInput">Ilość dorosłych</label>
+                                <input type="number" min=1 max=10 class="form-control" id="adultNumberInput" name="adultNumber" placeholder="Liczba dorosłych..." value="<?=$_SESSION["adultNumber"]?>">
+                                <label for="adultNumberInput">Liczba dorosłych</label>
                             </div>
                             <div class="form-floating">
-                                <input type="number" min=0 max=10 class="form-control" id="kidsNumberInput" name="kidsNumber" placeholder="Ilość dzieci..." value="<?=$_SESSION["kidsNumber"]?>">
-                                <label for="kidsNumberInput">Ilość dzieci</label>
+                                <input type="number" min=0 max=10 class="form-control" id="kidsNumberInput" name="kidsNumber" placeholder="Liczba dzieci..." value="<?=$_SESSION["kidsNumber"]?>">
+                                <label for="kidsNumberInput">Liczba dzieci</label>
                             </div>
                     </div>
                     <div class="modal-footer">
@@ -265,6 +265,22 @@ close_connection();
 
 
 <script>
+
+	// date validation
+	
+	var start = document.getElementById('startDate');
+	var end = document.getElementById('endDate');
+
+	start.addEventListener('change', function() {
+		if (start.value)
+			end.min = start.value;
+	}, false);
+	end.addEventLiseter('change', function() {
+		if (end.value)
+			start.max = end.value;
+	}, false);
+	
+
     //Choose modal to display
     $(document).ready(function () {
         //Function get value with information about modal name
