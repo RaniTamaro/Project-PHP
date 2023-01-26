@@ -107,7 +107,12 @@
         global $connection;
         
         $command = "delete from pokoj where id=$no;";		
-        mysqli_query($connection, $command) or exit("Błąd w zapytaniu: $command");
+        	try{
+			mysqli_query($connection, $command) or exit("Błąd w zapytaniu: $command");
+		}
+		catch(Exception $e) {
+			echo "<p><b>Nie można usunąć pokoju, gdyż posiada on rezerwacje.</b></p>";
+		}
     }
     
     open_connection();

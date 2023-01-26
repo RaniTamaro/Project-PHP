@@ -89,7 +89,6 @@ function save_guest($no)
     $surname = $_POST['surname'];
     $adultNumber = $_POST['adultNumber'];
     $kidsNumber = $_POST['kidsNumber'];
-    // isset($_POST['adult']) ? $adult = 'T' : $adult = 'N';
 
     if($no != -1)
         $command = "update goscie set imie='$name', nazwisko='$surname', iloscdoroslych=$adultNumber, iloscdzieci=$kidsNumber where id=$no;";
@@ -106,17 +105,33 @@ function delete_guest($no)
     global $connection;
 	
 	$command = "delete from goscie where id=$no;";		
-	mysqli_query($connection, $command) or exit("Błąd w zapytaniu: $command");
+	try{
+		mysqli_query($connection, $command) or exit("Błąd w zapytaniu: $command");
+	}
+	catch(Exception $e) {
+		echo "<p><b>Nie można usunąć gościa, gdyż posiada on rezerwacje.</b></p>";
+	}
+	//mysqli_query($connection, $command) or exit();
+
 }
 
 // display form for adding checkin and checkout
 function checkin_guest($no)
 {
     global $connection;
+	
+	// read how many guests we have
+	$command = "select iloscdoroslych, iloscdzieci from goscie where Id=$no;";
+	$row = mysqli_query($connection, $command) or exit("Błąd w zapytaniu: ".$command);
+    $guest = mysqli_fetch_row($row);
+	$peopleNumber = $guest[0] + $guest[1];
+	
+	echo "<p> Jestem tutaj </p>";
 
+	// get rooms that have enough capacity
     $roomArray = [];
-    $request = "select id, nazwa from pokoj;";
-    $result = mysqli_query($connection, $request);
+    $request = "select id, nazwa, lozka from pokoj where lozka >= $peopleNumber;";
+    $result = mysqli_query($connection, $request) or exit("Błąd w zapytaniu: ".$command);
     while($row = mysqli_fetch_array($result)){
         $roomArray += [$row[0] => $row[1]];
     }
@@ -174,7 +189,7 @@ switch($option) {
     case 'Dodaj nowego gościa': edit_guest(); break;
     case 'Zapisz': save_guest($no); break;
     case 'Usuń': delete_guest($no); break;
-	case 'Zamelduj': checkin_guest($no); break;
+	case 'Zarezerwuj': checkin_guest($no); break;
     case 'Potwierdź': save_checkin($no); break;
 }
 
