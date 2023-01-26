@@ -17,9 +17,20 @@
 	
 	$_SESSION["cenaSuma"] = 0;
 	
-	function calculate_price($perPerson, $perRoom, $adultNumber, $kidsNumber, $sniadanie, $parking, $transport){
-		// TODO
-		return $perRoom;
+	function calculate_price($perPerson, $perRoom, $adultNumber, $kidsNumber, $sniadanie, $parking, $transport, $numOfDays){
+		$price = $perPerson * ($adultNumber + $kidsNumber);
+		if ($price > $perRoom) $price = $perRoom;
+		
+		if ($sniadanie) $price += $adultNumber * 25 + $kidsNumber * 15;
+		if ($parking) $price += 55;
+		
+		// times number of days in hotel
+		$price = $price * $numOfDays;
+		
+		// transfort is only once per visit
+		if ($transport) $price += 200;
+		
+		return $price;
 	}
 
 	
@@ -32,7 +43,8 @@
 
         $request = "select pg.Id, g.imie, g.nazwisko, g.iloscdoroslych, g.iloscdzieci, 
 					pg.sniadanie, pg.parking, pg.transport, p.cenaosoba, p.cenapokoj,
-					p.nazwa, o.datazameldowania, o.datawymeldowania
+					p.nazwa, o.datazameldowania, o.datawymeldowania, 
+					datediff(o.datawymeldowania, o.datazameldowania)
                     from pokoj_goscie pg
                     join goscie g on pg.IdGoscia = g.Id
                     join pokoj p on pg.IdPokoju = p.Id
@@ -43,7 +55,7 @@
         if (!$result)
             return;
 
-        $headers = array("Imię i nazwisko gościa", "Dorośli / Dzieci", "Dodatki", "Nazwa pokoju", "Data zameldowania", "Data wymeldowania", "Cena");
+        $headers = array("Imię i nazwisko gościa", "Dorośli / Dzieci", "Dodatki", "Nazwa pokoju", "Data zameldowania", "Data wymeldowania", "Liczba dni", "Cena");
         ?>
         <form method='POST'>
             <h3>Raport</h3>
@@ -68,7 +80,7 @@
 
                     echo "<th scope='col'></th></tr></thead><tbody>";
                     while ($row = mysqli_fetch_row($result)) {
-						$row_price = calculate_price($row[8], $row[9], $row[3], $row[4], $row[5], $row[6], $row[7]);
+						$row_price = calculate_price($row[8], $row[9], $row[3], $row[4], $row[5], $row[6], $row[7], $row[13]);
 						$_SESSION["cenaSuma"] = $_SESSION["cenaSuma"] + $row_price;
                         echo "<tr class='text-center'>";
                         echo "<td>$row[1]  $row[2]</td>";
@@ -77,7 +89,7 @@
                         foreach ($row as $c => $cell)
                             if($c > 9)
                                 echo "<td>$cell</td>";
-						echo  "<td> $row_price </td>";
+						echo  "<td> $row_price zł </td>";
                         print("</tr>");
                     } ?>
                     </tbody>
@@ -85,7 +97,7 @@
         </form>
 		
 		<p> </p><p> </p>
-		<p for="checkinEndDateInput">Suma: <?=$_SESSION["cenaSuma"]?></p>
+		<p><b>Suma: <?=$_SESSION["cenaSuma"]?> zł </b></p>
 
         <?= mysqli_free_result($result);
     }
