@@ -76,7 +76,17 @@
         $_SESSION["editBreakfast"] =  $room[5];
         $_SESSION["editParking"] =  $room[6];
         $_SESSION["editTransport"] =  $room[7];
+
+        //Get array of room to add it to select
+        $roomArray = [];
+        $request = "select id, nazwa from pokoj;";
+        $result = mysqli_query($connection, $request);
+        while($row = mysqli_fetch_array($result)){
+            $roomArray += [$row[0] => $row[1]];
+        }
     
+        $_SESSION["roomList"] = $roomArray;
+
         $_SESSION["modalform"] = 'editCheckinData';
     }
 

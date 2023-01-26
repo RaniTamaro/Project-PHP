@@ -136,7 +136,6 @@ function checkin_guest($no)
     }
 
     $_SESSION["roomList"] = $roomArray;
-	// $_SESSION["roomName"] = '';
     $_SESSION["checkInDate"] = '';
     $_SESSION["checkOutDate"] = '';
     $_SESSION["breakfast"] = 'N';

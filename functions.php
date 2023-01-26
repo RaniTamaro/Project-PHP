@@ -23,9 +23,6 @@ function check_if_user_logged($SESSION){
 
 function generatedSelect($table, $selectName, $selectedOption = null){
     echo "<select name='$selectName' class='form-control' placeholder='Nazwa pokoju...>";
-    //$chosen = $_POST[$selectName] ?? 'noSelection';
-
-    //if($chosen == 'noSelection') 
 	echo "<option value='noSelection'>Wybierz z listy ...</option>";
         foreach ($table as $t => $tab)
             echo "<option value='$t'".($t==$selectedOption?' selected':'').">$tab</option>";
