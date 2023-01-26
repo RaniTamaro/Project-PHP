@@ -43,7 +43,7 @@ function show_guest()
                     foreach ($row as $c => $cell)
                         if ($c != 0 && $c < 3)
                             echo "<td>$cell</td>";
-                    echo "<td><input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Zamelduj'>
+                    echo "<td><input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Zarezerwuj'>
                             <input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Edytuj'>
                             <input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Usuń'>
                         </td>";
@@ -227,7 +227,7 @@ close_connection();
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Zameldowanie</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Rezerwacja</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
                 <form method=POST action=''>

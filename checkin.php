@@ -1,5 +1,5 @@
 <?php
-    $title = "Zameldowania gości";
+    $title = "Rezerwacje gości";
     $page = "checkin";
     include_once('header.php');
     include('functions.php');
@@ -26,9 +26,9 @@
         $headers = array("Imię i nazwisko gościa", "Nazwa pokoju", "Data zameldowania", "Data wymeldowania");
         ?>
         <form method='POST'>
-            <h3>Zameldowania</h3>
+            <h3>Rezerwacje</h3>
 
-            <input type="text" class="form-control search-input" id="checkinSearch" onkeyup="searchFuntion()" placeholder="Wyszukaj zameldowania"/>
+            <input type="text" class="form-control search-input" id="checkinSearch" onkeyup="searchFuntion()" placeholder="Wyszukaj rezerwacje"/>
             <table class='table table-striped table-color' id="checkinTable">
                 <thead>
                     <tr class="text-center">

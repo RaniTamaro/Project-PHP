@@ -44,7 +44,7 @@
                         <a class="nav-link <?= $page == 'rooms' ? 'active' : ''?>" href="rooms.php">Pokoje</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= $page == 'checkin' ? 'active' : ''?>" href="checkin.php">Zameldowania</a>
+                        <a class="nav-link <?= $page == 'checkin' ? 'active' : ''?>" href="checkin.php">Rezerwacje</a>
                     </li>
                      <li class="nav-item">
                         <a class="nav-link <?= $page == 'reports' ? 'active' : ''?>" href="reports.php">Raport</a>
