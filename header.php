@@ -40,8 +40,19 @@
                     <li class="nav-item">
                         <a class="nav-link <?= $page == 'guests' ? 'active' : ''?>" href="guests.php">Goście</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= $page == 'rooms' ? 'active' : ''?>" href="rooms.php">Pokoje</a>
+					<li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle <?= ($page == 'rooms') || ($page == 'free') ? 'active' : ''?>" 
+							href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                            Pokoje
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="rooms.php">Zestawienie</a></li>
+							<li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="free.php">Wolne</a></li>
+
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= $page == 'checkin' ? 'active' : ''?>" href="checkin.php">Rezerwacje</a>

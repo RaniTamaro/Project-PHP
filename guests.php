@@ -126,8 +126,6 @@ function checkin_guest($no)
     $guest = mysqli_fetch_row($row);
 	$peopleNumber = $guest[0] + $guest[1];
 	
-	echo "<p> Jestem tutaj </p>";
-
 	// get rooms that have enough capacity
     $roomArray = [];
     $request = "select id, nazwa, lozka from pokoj where lozka >= $peopleNumber;";
