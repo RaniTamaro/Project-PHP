@@ -21,7 +21,7 @@ function show_guest()
     if (!$result)
         return;
 
-    $headers = array("Imię", "Nazwisko");
+    $headers = array("Imię", "Nazwisko", "Dorośli / Dzieci");
     ?>
     <form method='POST'>
         <h3>Goście</h3>
@@ -43,6 +43,7 @@ function show_guest()
                     foreach ($row as $c => $cell)
                         if ($c != 0 && $c < 3)
                             echo "<td>$cell</td>";
+					echo "<td> $row[3] / $row[4] </td>"; 
                     echo "<td><input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Zarezerwuj'>
                             <input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Edytuj'>
                             <input type='submit' class='btn btn-outline-dark' name='button[$row[0]]' value='Usuń'>

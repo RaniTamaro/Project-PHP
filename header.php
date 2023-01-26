@@ -57,9 +57,22 @@
                     <li class="nav-item">
                         <a class="nav-link <?= $page == 'checkin' ? 'active' : ''?>" href="checkin.php">Rezerwacje</a>
                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link <?= $page == 'reports' ? 'active' : ''?>" href="reports.php">Raport</a>
+					
+					<li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle <?= ($page == 'reports') || ($page == 'dayreport') ? 'active' : ''?>" 
+							href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                            Raporty
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="reports.php">Finansowy</a>
+							<li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="dayreport.php">Dzienny</a>
+
+                        </ul>
                     </li>
+					
 					<li class="nav-item">
                         <a class="nav-link" href="log.php">Wyloguj</a>
                     </li>
