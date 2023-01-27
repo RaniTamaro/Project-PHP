@@ -71,12 +71,12 @@ function show_free_rooms()
 		<table class='table table-striped table-color'>
 			<tr>
 				<td>
-					<label for="checkinStartDateInput">Zalemdowanie od</label>
+					<label for="checkinStartDateInput">Zameldowanie od</label>
 					<input type="date" required class="form-control" id="checkinStartDateInput" name="freeRoomStartDate"
 						value="<?= $_SESSION["freeRoomStartDate"] ?>">
 				</td>
 				<td>
-					<label for="checkinEndDateInput">Zalemdowanie do</label>
+					<label for="checkinEndDateInput">Zameldowanie do</label>
 					<input type="date" required class="form-control" id="checkinEndDateInput" name="freeRoomEndDate"
 						value="<?= $_SESSION["freeRoomEndDate"] ?>">
 				</td>

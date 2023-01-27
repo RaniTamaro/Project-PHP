@@ -162,7 +162,7 @@
                         </div>
                         <div class="form-floating mb-3">
                             <input type="date" required class="form-control" id="checkinStartDateInput" name="checkinStartDate" placeholder="Data od..." value="<?=$_SESSION["checkinStartDate"]?>">
-                            <label for="checkinStartDateInput">Zalemdowanie od</label>
+                            <label for="checkinStartDateInput">Zameldowanie od</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="date" required class="form-control" id="checkinEndDateInput" name="checkinEndDate" placeholder="Data do..." value="<?=$_SESSION["checkinEndDate"]?>">
