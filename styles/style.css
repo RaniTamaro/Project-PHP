@@ -6,6 +6,15 @@
     background-color: #172A3A;
 }
 
+.navbar-nav > li > .dropdown-menu{
+    background-color: #172A3A;
+}
+
+.navbar-nav > li > .dropdown-menu a:hover{
+    background-color: #253c50;
+}
+
+
 .navbar a{
     color: #74B3CE;
 }
@@ -51,7 +60,6 @@ border-bottom: 1px solid #172A3A;
 }
 
 .search-input{
-    background-image: url('/styles/search-icon.svg');
     background-position: 10px 12px;
     background-repeat: no-repeat;
     margin: 5px;

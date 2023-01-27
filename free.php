@@ -37,7 +37,7 @@ function show_free_rooms()
 	// change result to array od ids
 	$reservedRooms = [];
 	while ($row = mysqli_fetch_array($result)) {
-		$reservedRooms += [$row[1]];
+		array_push($reservedRooms, $row[1]);
 	}
 
 	mysqli_free_result($result);

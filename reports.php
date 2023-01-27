@@ -101,32 +101,13 @@
 
         <?= mysqli_free_result($result);
     }
-	
-	
-	open_connection();
-	/*
-    $option = '';
-    if(isset($_POST['button'])) {	
-        $no = key($_POST['button']);
-        $option = $_POST['button'][$no];
-        $_SESSION["no"] = $no;
-    }
 
-    switch($option) {
-        case 'Edytuj dane': edit_checkin($no); break;
-        case 'Odwołaj wizytę': cancel_checkin($no); break;
-        case 'Zapisz': save_checkin($no); break;
-    }
-	*/
+
+	open_connection();
 
     show_checkins();
     close_connection();
-	
-	
-	
-	
-	
-	
+
 ?>
 
     </body>
