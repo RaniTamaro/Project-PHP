@@ -305,7 +305,7 @@ close_connection();
 				if (start.value)
 					end.min = start.value;
 			}, false);
-			end.addEventLiseter('change', function() {
+			end.addEventListener('change', function() {
 				if (end.value)
 					start.max = end.value;
 			}, false);
