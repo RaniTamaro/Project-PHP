@@ -194,7 +194,7 @@
         for (i = 0; i < tr.length; i++){
             td = tr[i].getElementsByTagName('td')[0];
             if (td){
-                txtValue = td.textContent || td.innerHTML;
+                txtValue = td.textContent.toLowerCase() || td.innerHTML.toLowerCase();
                 if (txtValue.indexOf(filter) > -1){
                     tr[i].style.display = "";
                 }

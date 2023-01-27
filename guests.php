@@ -321,12 +321,13 @@ close_connection();
         table = document.getElementById('guestsTable');
         tr = table.getElementsByTagName('tr');
 
-        for (i = 0; i < tr.length; i++){
+        for (i = 1; i <= tr.length; i++){
             td1 = tr[i].getElementsByTagName('td')[0];
             td2 = tr[i].getElementsByTagName('td')[1];
+            //alert(td1);
             if (td1 || td2){
-                txtValue1 = td1.textContent || td1.innerHTML;
-                txtValue2 = td2.textContent || td2.innerHTML;
+                txtValue1 = td1.textContent.toLowerCase() || td1.innerHTML.toLowerCase();
+                txtValue2 = td2.textContent.toLowerCase() || td2.innerHTML.toLowerCase();
                 if (txtValue1.indexOf(filter) > -1 || txtValue2.indexOf(filter) > -1){
                     tr[i].style.display = "";
                 }
